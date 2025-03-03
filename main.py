@@ -3,12 +3,9 @@ import requests
 from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
-import os
 from http.client import HTTPMessage
-
 from dashscope import DashScope
 
-import requests
 
 # Load environment variables
 load_dotenv()
