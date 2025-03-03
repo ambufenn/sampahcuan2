@@ -1,93 +1,10 @@
-##kekempat 
-import os
-import requests
-import streamlit as st
-from dotenv import load_dotenv
-
-# Load API key dari .env
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
-
-if not API_KEY:
-    st.error("API Key tidak ditemukan! Pastikan sudah diset di .env dengan nama API_KEY")
-    st.stop()
-
-# API Base URL (Pastikan ini sesuai dokumentasi terbaru)
-API_BASE_URL = "https://dashscope.aliyuncs.com/v1"
-
-def categorize_image(file_path):
-    """Upload image & categorize using Qwen-VL"""
-    url = f"{API_BASE_URL}/services/aigc/text-to-image/generation"
-
-    headers = {
-        "Authorization": f"Bearer {API_KEY}"
-    }
-
-    with open(file_path, "rb") as image_file:
-        files = {"file": image_file}
-        response = requests.post(url, headers=headers, files=files)
-
-    if response.status_code == 200:
-        return response.json().get("category", "Unknown")
-    else:
-        return f"Error {response.status_code}: {response.json()}"
-
-def chatbot_response(category):
-    """Chatbot response using Qwen-Max"""
-    url = f"{API_BASE_URL}/services/aigc/text-generation/generation"
-
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    prompt = f"Apa manfaat dari sampah kategori {category}?"
-    payload = {
-        "model": "qwen-max",
-        "messages": [{"role": "user", "content": prompt}]
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-
-    if response.status_code == 200:
-        return response.json().get("message", "No response")
-    else:
-        return f"Error {response.status_code}: {response.json()}"
-
-# Streamlit UI
-st.title("Sampah Bercuan - Deteksi Kategori Sampah")
-st.write("Upload gambar sampah untuk dikategorikan.")
-
-uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
-
-if uploaded_file is not None:
-    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
-
-    # Simpan file sementara
-    img_path = f"temp_{uploaded_file.name}"
-    with open(img_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
-    # Deteksi kategori sampah
-    category = categorize_image(img_path)
-    st.write(f"Kategori Sampah: {category}")
-
-    # Chatbot memberikan informasi tentang kategori sampah
-    chat_response = chatbot_response(category)
-    st.write(f"Manfaat Sampah: {chat_response}")
-
-
-
-
-
-
-# ##ketiga
+# ##kekempat 
 # import os
 # import requests
 # import streamlit as st
 # from dotenv import load_dotenv
 
-# # Load API key dari .env file
+# # Load API key dari .env
 # load_dotenv()
 # API_KEY = os.getenv("API_KEY")
 
@@ -95,13 +12,13 @@ if uploaded_file is not None:
 #     st.error("API Key tidak ditemukan! Pastikan sudah diset di .env dengan nama API_KEY")
 #     st.stop()
 
-# # Base URL untuk Alibaba DashScope API
-# API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
+# # API Base URL (Pastikan ini sesuai dokumentasi terbaru)
+# API_BASE_URL = "https://dashscope.aliyuncs.com/v1"
 
 # def categorize_image(file_path):
 #     """Upload image & categorize using Qwen-VL"""
-#     url = f"{API_BASE_URL}/vision_interpretation"
-    
+#     url = f"{API_BASE_URL}/services/aigc/text-to-image/generation"
+
 #     headers = {
 #         "Authorization": f"Bearer {API_KEY}"
 #     }
@@ -117,7 +34,7 @@ if uploaded_file is not None:
 
 # def chatbot_response(category):
 #     """Chatbot response using Qwen-Max"""
-#     url = f"{API_BASE_URL}/chat/completions"
+#     url = f"{API_BASE_URL}/services/aigc/text-generation/generation"
 
 #     headers = {
 #         "Authorization": f"Bearer {API_KEY}",
@@ -133,8 +50,7 @@ if uploaded_file is not None:
 #     response = requests.post(url, headers=headers, json=payload)
 
 #     if response.status_code == 200:
-#         response_data = response.json()
-#         return response_data.get("message", "No response")
+#         return response.json().get("message", "No response")
 #     else:
 #         return f"Error {response.status_code}: {response.json()}"
 
@@ -159,6 +75,90 @@ if uploaded_file is not None:
 #     # Chatbot memberikan informasi tentang kategori sampah
 #     chat_response = chatbot_response(category)
 #     st.write(f"Manfaat Sampah: {chat_response}")
+
+
+
+
+
+
+##ketiga
+import os
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+
+# Load API key dari .env file
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+
+if not API_KEY:
+    st.error("API Key tidak ditemukan! Pastikan sudah diset di .env dengan nama API_KEY")
+    st.stop()
+
+# Base URL untuk Alibaba DashScope API
+API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
+
+def categorize_image(file_path):
+    """Upload image & categorize using Qwen-VL"""
+    url = f"{API_BASE_URL}/vision_interpretation"
+    
+    headers = {
+        "Authorization": f"Bearer {API_KEY}"
+    }
+
+    with open(file_path, "rb") as image_file:
+        files = {"file": image_file}
+        response = requests.post(url, headers=headers, files=files)
+
+    if response.status_code == 200:
+        return response.json().get("category", "Unknown")
+    else:
+        return f"Error {response.status_code}: {response.json()}"
+
+def chatbot_response(category):
+    """Chatbot response using Qwen-Max"""
+    url = f"{API_BASE_URL}/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    prompt = f"Apa manfaat dari sampah kategori {category}?"
+    payload = {
+        "model": "qwen-max",
+        "messages": [{"role": "user", "content": prompt}]
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+
+    if response.status_code == 200:
+        response_data = response.json()
+        return response_data.get("message", "No response")
+    else:
+        return f"Error {response.status_code}: {response.json()}"
+
+# Streamlit UI
+st.title("Sampah Bercuan - Deteksi Kategori Sampah")
+st.write("Upload gambar sampah untuk dikategorikan.")
+
+uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+
+    # Simpan file sementara
+    img_path = f"temp_{uploaded_file.name}"
+    with open(img_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    # Deteksi kategori sampah
+    category = categorize_image(img_path)
+    st.write(f"Kategori Sampah: {category}")
+
+    # Chatbot memberikan informasi tentang kategori sampah
+    chat_response = chatbot_response(category)
+    st.write(f"Manfaat Sampah: {chat_response}")
 
 
 
