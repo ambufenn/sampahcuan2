@@ -4,7 +4,7 @@ import requests
 from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
-import dashscope  
+ 
 
 # Load environment variables
 load_dotenv()
