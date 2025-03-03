@@ -1,3 +1,87 @@
+## ke lima
+import os
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+import dashscope
+from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
+
+# Load API key dari .env
+load_dotenv()
+api_key = os.getenv("API_KEY")
+
+if not api_key:
+    raise ValueError("API_KEY tidak ditemukan di .env!")
+
+# Set API key ke dashscope
+dashscope.api_key = api_key
+
+# Streamlit UI
+st.title("Sampah Bercuan - Klasifikasi Sampah")
+st.write("Upload gambar sampah untuk dikategorikan.")
+
+uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+
+def categorize_image(file_path):
+    """Upload image & categorize using Qwen-VL"""
+    try:
+        response = Generation.call(
+            model="qwen-vl-plus",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Apa kategori dari gambar ini?"},
+                        {"type": "image_url", "image_url": {"url": file_path}},
+                    ],
+                }
+            ],
+        )
+
+        if "output" in response:
+            return response["output"]["text"]
+        return "Gagal menginterpretasi gambar."
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def chatbot_response(category):
+    """Chatbot response using Qwen-Max"""
+    try:
+        response = Generation.call(
+            model="qwen-max",
+            messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
+        )
+
+        if "output" in response:
+            return response["output"]["text"]
+        return "Tidak ada jawaban."
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+if uploaded_file is not None:
+    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+
+    # Simpan file sementara
+    img_path = f"temp_{uploaded_file.name}"
+    with open(img_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    # Deteksi kategori sampah
+    category = categorize_image(img_path)
+    st.write(f"Kategori Sampah: {category}")
+
+    # Chatbot memberikan informasi tentang manfaat sampah
+    chat_response = chatbot_response(category)
+    st.write(f"Manfaat Sampah: {chat_response}")
+
+
+
+
+
+
+
 # ##kekempat 
 # import os
 # import requests
@@ -81,111 +165,111 @@
 
 
 
-##ketiga
-import os
-import requests
-import streamlit as st
-from dotenv import load_dotenv
+# ##ketiga
+# import os
+# import requests
+# import streamlit as st
+# from dotenv import load_dotenv
 
-# Load API key dari .env file
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
+# # Load API key dari .env file
+# load_dotenv()
+# API_KEY = os.getenv("API_KEY")
 
-if not API_KEY:
-    st.error("API Key tidak ditemukan! Pastikan sudah diset di .env dengan nama API_KEY")
-    st.stop()
+# if not API_KEY:
+#     st.error("API Key tidak ditemukan! Pastikan sudah diset di .env dengan nama API_KEY")
+#     st.stop()
 
-# Base URL untuk Alibaba DashScope API
-API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
+# # Base URL untuk Alibaba DashScope API
+# API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
 
-def categorize_image(file_path):
-    """Upload image & categorize using Qwen-VL"""
-    url = f"{API_BASE_URL}/vision_interpretation"
+# def categorize_image(file_path):
+#     """Upload image & categorize using Qwen-VL"""
+#     url = f"{API_BASE_URL}/vision_interpretation"
     
-    headers = {
-        "Authorization": f"Bearer {API_KEY}"
-    }
+#     headers = {
+#         "Authorization": f"Bearer {API_KEY}"
+#     }
 
-    with open(file_path, "rb") as image_file:
-        files = {"file": image_file}
-        response = requests.post(url, headers=headers, files=files)
+#     with open(file_path, "rb") as image_file:
+#         files = {"file": image_file}
+#         response = requests.post(url, headers=headers, files=files)
 
-    if response.status_code == 200:
-        return response.json().get("category", "Unknown")
-    else:
-        return f"Error {response.status_code}: {response.json()}"
+#     if response.status_code == 200:
+#         return response.json().get("category", "Unknown")
+#     else:
+#         return f"Error {response.status_code}: {response.json()}"
 
-def chatbot_response(category):
-    """Chatbot response using Qwen-Max"""
-    url = f"{API_BASE_URL}/chat/completions"
+# def chatbot_response(category):
+#     """Chatbot response using Qwen-Max"""
+#     url = f"{API_BASE_URL}/chat/completions"
 
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
+#     headers = {
+#         "Authorization": f"Bearer {API_KEY}",
+#         "Content-Type": "application/json"
+#     }
 
-    prompt = f"Apa manfaat dari sampah kategori {category}?"
-    payload = {
-        "model": "qwen-max",
-        "messages": [{"role": "user", "content": prompt}]
-    }
+#     prompt = f"Apa manfaat dari sampah kategori {category}?"
+#     payload = {
+#         "model": "qwen-max",
+#         "messages": [{"role": "user", "content": prompt}]
+#     }
 
-    response = requests.post(url, headers=headers, json=payload)
+#     response = requests.post(url, headers=headers, json=payload)
 
-    if response.status_code == 200:
-        response_data = response.json()
-        return response_data.get("message", "No response")
-    else:
-        return f"Error {response.status_code}: {response.json()}"
+#     if response.status_code == 200:
+#         response_data = response.json()
+#         return response_data.get("message", "No response")
+#     else:
+#         return f"Error {response.status_code}: {response.json()}"
 
-# Streamlit UI
-st.title("Sampah Bercuan - Deteksi Kategori Sampah")
-st.write("Upload gambar sampah untuk dikategorikan.")
+# # Streamlit UI
+# st.title("Sampah Bercuan - Deteksi Kategori Sampah")
+# st.write("Upload gambar sampah untuk dikategorikan.")
 
-uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+# uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
 
-if uploaded_file is not None:
-    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+# if uploaded_file is not None:
+#     st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
 
-    # Simpan file sementara
-    img_path = f"temp_{uploaded_file.name}"
-    with open(img_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+#     # Simpan file sementara
+#     img_path = f"temp_{uploaded_file.name}"
+#     with open(img_path, "wb") as f:
+#         f.write(uploaded_file.getbuffer())
 
-    # Deteksi kategori sampah
-    category = categorize_image(img_path)
-    st.write(f"Kategori Sampah: {category}")
+#     # Deteksi kategori sampah
+#     category = categorize_image(img_path)
+#     st.write(f"Kategori Sampah: {category}")
 
-    # Chatbot memberikan informasi tentang kategori sampah
-    chat_response = chatbot_response(category)
-    st.write(f"Manfaat Sampah: {chat_response}")
-
-
+#     # Chatbot memberikan informasi tentang kategori sampah
+#     chat_response = chatbot_response(category)
+#     st.write(f"Manfaat Sampah: {chat_response}")
 
 
 
 
 
 
-# # ##kedua
-# # import os
-# # import requests
-# # from dotenv import load_dotenv
-# # import streamlit as st
-# # from openai import OpenAI
+
+
+# # # ##kedua
+# # # import os
+# # # import requests
+# # # from dotenv import load_dotenv
+# # # import streamlit as st
+# # # from openai import OpenAI
  
 
-# # # Load environment variables
-# # load_dotenv()
-# # api_key = os.getenv("API_KEY")
-# # print(f"API_KEY: {api_key}")  # Debugging
-# # if api_key:
-# #     os.environ["DASHSCOPE_API_KEY"] = api_key
-# # else:
-# #     raise ValueError("API_KEY tidak ditemukan di .env!")
+# # # # Load environment variables
+# # # load_dotenv()
+# # # api_key = os.getenv("API_KEY")
+# # # print(f"API_KEY: {api_key}")  # Debugging
+# # # if api_key:
+# # #     os.environ["DASHSCOPE_API_KEY"] = api_key
+# # # else:
+# # #     raise ValueError("API_KEY tidak ditemukan di .env!")
 
-# # # Base URL for Alibaba DashScope API
-# # API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
+# # # # Base URL for Alibaba DashScope API
+# # # API_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1/apps/4f0f74ce308a435c86613251d38fcf21/completion"
 
 # # # Initialize DashScope client
 # # client = DashScope()
