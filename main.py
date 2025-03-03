@@ -6,13 +6,6 @@ from dotenv import load_dotenv
 import dashscope
 from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
 
-import os
-import requests
-import streamlit as st
-from dotenv import load_dotenv
-import dashscope
-from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
-
 # Load API key dari .env
 load_dotenv()
 api_key = os.getenv("API_KEY")
