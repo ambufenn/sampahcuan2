@@ -6,6 +6,13 @@ from dotenv import load_dotenv
 import dashscope
 from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
 
+import os
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+import dashscope
+from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
+
 # Load API key dari .env
 load_dotenv()
 api_key = os.getenv("API_KEY")
@@ -38,12 +45,42 @@ def categorize_image(file_path):
             ],
         )
 
-        if "output" in response:
-            return response["output"]["text"]
-        return "Gagal menginterpretasi gambar."
+        # Debug output
+        print("Response dari API:", response)
+        st.write("Response dari API:", response)
+
+        if response is None:
+            return "Gagal mendapatkan respons dari API."
+        if "output" not in response:
+            return "Respons tidak memiliki output yang diharapkan."
+
+        return response["output"]["text"]
 
     except Exception as e:
         return f"Error: {str(e)}"
+
+def chatbot_response(category):
+    """Chatbot response using Qwen-Max"""
+    try:
+        response = Generation.call(
+            model="qwen-max",
+            messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
+        )
+
+        # Debug output
+        print("Response dari API:", response)
+        st.write("Response dari API:", response)
+
+        if response is None:
+            return "Gagal mendapatkan respons dari API."
+        if "output" not in response:
+            return "Respons tidak memiliki output yang diharapkan."
+
+        return response["output"]["text"]
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+        
 
 def chatbot_response(category):
     """Chatbot response using Qwen-Max"""
@@ -61,7 +98,8 @@ def chatbot_response(category):
         return f"Error: {str(e)}"
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+    #st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+    st.image(uploaded_file, caption="Gambar yang diupload", use_container_width=True)
 
     # Simpan file sementara
     img_path = f"temp_{uploaded_file.name}"
@@ -75,7 +113,6 @@ if uploaded_file is not None:
     # Chatbot memberikan informasi tentang manfaat sampah
     chat_response = chatbot_response(category)
     st.write(f"Manfaat Sampah: {chat_response}")
-
 
 
 
