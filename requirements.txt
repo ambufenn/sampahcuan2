@@ -3,5 +3,6 @@ python-dotenv
 requests
 openai
 alibabacloud-dashscope 
+orjson
 
 
