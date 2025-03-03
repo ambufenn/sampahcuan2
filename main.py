@@ -5,7 +5,9 @@ import streamlit as st
 from openai import OpenAI
 import os
 from http.client import HTTPMessage
-from alibabacloud_dashscope import DashScope
+
+from dashscope import DashScope
+
 import requests
 
 # Load environment variables
