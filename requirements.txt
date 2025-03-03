@@ -2,7 +2,7 @@ streamlit
 python-dotenv
 requests
 openai
-dashscope 
+ 
 orjson
 
 
