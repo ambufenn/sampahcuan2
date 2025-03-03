@@ -4,7 +4,7 @@ import requests
 from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
-from dashscope import DashScope  # Pastikan sudah diinstall dengan `pip install dashscope`
+import dashScope  
 
 # Load environment variables
 load_dotenv()
