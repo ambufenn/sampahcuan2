@@ -1,1 +1,63 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampah Bercuan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .box {
+            width: 48%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        .upload-box {
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #ccc;
+        }
+        .saldo-box { background-color: #e3f2fd; }
+        .chat-box { background-color: #f3e5f5; }
+        .invest-box { background-color: #fff3e0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box upload-box">
+            <h3>📤 Upload Gambar Sampah</h3>
+            <p>Silakan upload gambar untuk dianalisis.</p>
+        </div>
+        <div class="box saldo-box">
+            <h3>💰 Saldo E-Wallet</h3>
+            <p id="saldo">Rp0</p>
+        </div>
+        <div class="box">
+            <h3>🗑️ Kategori Sampah</h3>
+            <p id="kategori">Belum ada data</p>
+        </div>
+        <div class="box chat-box">
+            <h3>♻️ Manfaat Sampah</h3>
+            <p id="manfaat">Belum ada data</p>
+        </div>
+        <div class="box invest-box">
+            <h3>📈 Investasi dengan Saldo</h3>
+            <p id="investasi">Tekan tombol di bawah</p>
+            <button onclick="askInvestment()">Gunakan Saldo</button>
+        </div>
+    </div>
+</body>
+</html>
