@@ -1,3 +1,116 @@
+import os
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+import dashscope
+from dashscope import Generation
+
+# Load API key dari .env
+load_dotenv()
+api_key = os.getenv("API_KEY")
+if not api_key:
+    raise ValueError("API_KEY tidak ditemukan di .env!")
+
+dashscope.api_key = api_key
+
+# Harga sampah plastik per kg
+HARGA_PLASTIK_PER_KG = 5000  # dalam rupiah
+PLASTIK_DEPOSIT_GRAM = 50  # setiap item plastik menambah 50 gram saldo
+
+# Simulasi saldo e-wallet (diinisialisasi 0)
+saldo_ewallet = 0
+
+# Streamlit UI
+st.title("Sampah Bercuan - Klasifikasi Sampah")
+st.write("Upload gambar sampah untuk dikategorikan.")
+
+uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+
+def categorize_image(file_path):
+    """Upload image & categorize using Qwen-VL"""
+    try:
+        response = Generation.call(
+            model="qwen-vl-plus",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Apa kategori dari gambar ini?"},
+                        {"type": "image_url", "image_url": {"url": file_path}},
+                    ],
+                }
+            ],
+        )
+        
+        if response and "output" in response:
+            return response["output"]["text"].lower()
+        return "Tidak dapat mengklasifikasikan gambar."
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def chatbot_response(category):
+    """Chatbot response using Qwen-Max"""
+    try:
+        response = Generation.call(
+            model="qwen-max",
+            messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
+        )
+        
+        if response and "output" in response:
+            return response["output"]["text"]
+        return "Tidak ada jawaban."
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def chatbot_investasi():
+    """Chatbot untuk konsultasi investasi"""
+    user_input = st.text_input("Tanyakan tentang investasi atau emas deposit:")
+    if user_input:
+        response = Generation.call(
+            model="qwen-max",
+            messages=[{"role": "user", "content": user_input}]
+        )
+        if response and "output" in response:
+            st.write("Assistant Investasi:", response["output"]["text"])
+        else:
+            st.write("Tidak ada jawaban.")
+
+if uploaded_file is not None:
+    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+    img_path = f"temp_{uploaded_file.name}"
+    with open(img_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    
+    # Deteksi kategori sampah
+    category = categorize_image(img_path)
+    st.write(f"Kategori Sampah: {category}")
+    
+    # Tambah saldo jika sampah adalah plastik
+    global saldo_ewallet
+    if "plastik" in category:
+        deposit = (PLASTIK_DEPOSIT_GRAM / 1000) * HARGA_PLASTIK_PER_KG
+        saldo_ewallet += deposit
+        st.write(f"✅ Anda mendapatkan Rp {deposit:.0f} dari sampah plastik!")
+    
+    # Tampilkan saldo e-wallet
+    st.write(f"💰 Saldo e-wallet: Rp {saldo_ewallet:.0f}")
+    
+    # Chatbot manfaat sampah
+    chat_response = chatbot_response(category)
+    st.write(f"♻️ Manfaat Sampah: {chat_response}")
+    
+# Menu chatbot investasi
+st.header("💡 Konsultasi Investasi")
+chatbot_investasi()
+keenam
+
+
+
+
+
+
+
+
 ## ke lima
 import os
 import requests
