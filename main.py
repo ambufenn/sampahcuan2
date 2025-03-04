@@ -128,7 +128,7 @@ with col4:
             chat_response = chat_response["output"]["text"]
         else:
             chat_response = "Tidak ada jawaban."
-    st.text_area("Jawaban Chatbot:", chat_response, height=150)
+   # st.text_area("Jawaban Chatbot:", chat_response, height=150)
 
 # with col4:
 #     if st.button("Gunakan untuk Beli Emas (Rp 10000)"):
