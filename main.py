@@ -1,3 +1,5 @@
+
+##keenam
 import os
 import requests
 import streamlit as st
@@ -111,114 +113,114 @@ keenam
 
 
 
-## ke lima
-import os
-import requests
-import streamlit as st
-from dotenv import load_dotenv
-import dashscope
-from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
+# ## ke lima
+# import os
+# import requests
+# import streamlit as st
+# from dotenv import load_dotenv
+# import dashscope
+# from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
 
-# Load API key dari .env
-load_dotenv()
-api_key = os.getenv("API_KEY")
+# # Load API key dari .env
+# load_dotenv()
+# api_key = os.getenv("API_KEY")
 
-if not api_key:
-    raise ValueError("API_KEY tidak ditemukan di .env!")
+# if not api_key:
+#     raise ValueError("API_KEY tidak ditemukan di .env!")
 
-# Set API key ke dashscope
-dashscope.api_key = api_key
+# # Set API key ke dashscope
+# dashscope.api_key = api_key
 
-# Streamlit UI
-st.title("Sampah Bercuan - Klasifikasi Sampah")
-st.write("Upload gambar sampah untuk dikategorikan.")
+# # Streamlit UI
+# st.title("Sampah Bercuan - Klasifikasi Sampah")
+# st.write("Upload gambar sampah untuk dikategorikan.")
 
-uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
+# uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
 
-def categorize_image(file_path):
-    """Upload image & categorize using Qwen-VL"""
-    try:
-        response = Generation.call(
-            model="qwen-vl-plus",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "Apa kategori dari gambar ini?"},
-                        {"type": "image_url", "image_url": {"url": file_path}},
-                    ],
-                }
-            ],
-        )
+# def categorize_image(file_path):
+#     """Upload image & categorize using Qwen-VL"""
+#     try:
+#         response = Generation.call(
+#             model="qwen-vl-plus",
+#             messages=[
+#                 {
+#                     "role": "user",
+#                     "content": [
+#                         {"type": "text", "text": "Apa kategori dari gambar ini?"},
+#                         {"type": "image_url", "image_url": {"url": file_path}},
+#                     ],
+#                 }
+#             ],
+#         )
 
-        # Debug output
-        print("Response dari API:", response)
-        st.write("Response dari API:", response)
+#         # Debug output
+#         print("Response dari API:", response)
+#         st.write("Response dari API:", response)
 
-        if response is None:
-            return "Gagal mendapatkan respons dari API."
-        if "output" not in response:
-            return "Respons tidak memiliki output yang diharapkan."
+#         if response is None:
+#             return "Gagal mendapatkan respons dari API."
+#         if "output" not in response:
+#             return "Respons tidak memiliki output yang diharapkan."
 
-        return response["output"]["text"]
+#         return response["output"]["text"]
 
-    except Exception as e:
-        return f"Error: {str(e)}"
+#     except Exception as e:
+#         return f"Error: {str(e)}"
 
-def chatbot_response(category):
-    """Chatbot response using Qwen-Max"""
-    try:
-        response = Generation.call(
-            model="qwen-max",
-            messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
-        )
+# def chatbot_response(category):
+#     """Chatbot response using Qwen-Max"""
+#     try:
+#         response = Generation.call(
+#             model="qwen-max",
+#             messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
+#         )
 
-        # Debug output
-        print("Response dari API:", response)
-        st.write("Response dari API:", response)
+#         # Debug output
+#         print("Response dari API:", response)
+#         st.write("Response dari API:", response)
 
-        if response is None:
-            return "Gagal mendapatkan respons dari API."
-        if "output" not in response:
-            return "Respons tidak memiliki output yang diharapkan."
+#         if response is None:
+#             return "Gagal mendapatkan respons dari API."
+#         if "output" not in response:
+#             return "Respons tidak memiliki output yang diharapkan."
 
-        return response["output"]["text"]
+#         return response["output"]["text"]
 
-    except Exception as e:
-        return f"Error: {str(e)}"
+#     except Exception as e:
+#         return f"Error: {str(e)}"
         
 
-def chatbot_response(category):
-    """Chatbot response using Qwen-Max"""
-    try:
-        response = Generation.call(
-            model="qwen-max",
-            messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
-        )
+# def chatbot_response(category):
+#     """Chatbot response using Qwen-Max"""
+#     try:
+#         response = Generation.call(
+#             model="qwen-max",
+#             messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
+#         )
 
-        if "output" in response:
-            return response["output"]["text"]
-        return "Tidak ada jawaban."
+#         if "output" in response:
+#             return response["output"]["text"]
+#         return "Tidak ada jawaban."
 
-    except Exception as e:
-        return f"Error: {str(e)}"
+#     except Exception as e:
+#         return f"Error: {str(e)}"
 
-if uploaded_file is not None:
-    #st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
-    st.image(uploaded_file, caption="Gambar yang diupload", use_container_width=True)
+# if uploaded_file is not None:
+#     #st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+#     st.image(uploaded_file, caption="Gambar yang diupload", use_container_width=True)
 
-    # Simpan file sementara
-    img_path = f"temp_{uploaded_file.name}"
-    with open(img_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+#     # Simpan file sementara
+#     img_path = f"temp_{uploaded_file.name}"
+#     with open(img_path, "wb") as f:
+#         f.write(uploaded_file.getbuffer())
 
-    # Deteksi kategori sampah
-    category = categorize_image(img_path)
-    st.write(f"Kategori Sampah: {category}")
+#     # Deteksi kategori sampah
+#     category = categorize_image(img_path)
+#     st.write(f"Kategori Sampah: {category}")
 
-    # Chatbot memberikan informasi tentang manfaat sampah
-    chat_response = chatbot_response(category)
-    st.write(f"Manfaat Sampah: {chat_response}")
+#     # Chatbot memberikan informasi tentang manfaat sampah
+#     chat_response = chatbot_response(category)
+#     st.write(f"Manfaat Sampah: {chat_response}")
 
 
 
