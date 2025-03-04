@@ -4,7 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 import dashscope
-from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
+from dashscope import Generation  
 
 # Load API key dari .env
 load_dotenv()
@@ -21,8 +21,8 @@ if "saldo_ewallet" not in st.session_state:
     st.session_state.saldo_ewallet = 0
 
 # Streamlit UI
-st.title("Sampah Bercuan - Klasifikasi Sampah")
-st.write("Upload gambar sampah untuk dikategorikan.")
+st.title("Sampah Bercuan")
+st.write("Upload gambar sampah")
 
 # Layout utama
 uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "png", "jpeg"])
@@ -114,6 +114,21 @@ with col3:
     if st.button("Gunakan untuk Investasi (Rp 5000)"):
         gunakan_saldo(5000, "Investasi")
 
-with col4:
-    if st.button("Gunakan untuk Beli Emas (Rp 10000)"):
-        gunakan_saldo(10000, "Beli Emas")
+with col2:
+    st.subheader("Chatbot - Asistant Investadi Anda")
+    chat_input = st.text_input("Sudahkan anda menabung enmas hari ini?")
+    chat_response = ""
+    if chat_input:
+        chat_response = Generation.call(
+            model="qwen-max",
+            messages=[{"role": "user", "content": chat_input}]
+        )
+        if chat_response and "output" in chat_response:
+            chat_response = chat_response["output"]["text"]
+        else:
+            chat_response = "Tidak ada jawaban."
+    st.text_area("Jawaban Chatbot:", chat_response, height=150)
+
+# with col4:
+#     if st.button("Gunakan untuk Beli Emas (Rp 10000)"):
+#         gunakan_saldo(10000, "Beli Emas")
