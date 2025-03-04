@@ -108,6 +108,7 @@ def gunakan_saldo(jumlah, tujuan):
     else:
         st.error("Saldo tidak mencukupi!")
 
+st.markdown("---")
 col3, col4 = st.columns(2)
 
 with col3:
