@@ -132,3 +132,6 @@ with col2:
 # with col4:
 #     if st.button("Gunakan untuk Beli Emas (Rp 10000)"):
 #         gunakan_saldo(10000, "Beli Emas")
+
+
+st.markdown("---")
