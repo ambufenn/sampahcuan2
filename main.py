@@ -5,22 +5,22 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 import dashscope
-from dashscope import Generation
+from dashscope import Generation  # Pastikan sudah diinstall dengan `pip install dashscope`
 
 # Load API key dari .env
 load_dotenv()
 api_key = os.getenv("API_KEY")
+
 if not api_key:
     raise ValueError("API_KEY tidak ditemukan di .env!")
 
+# Set API key ke dashscope
 dashscope.api_key = api_key
 
-# Harga sampah plastik per kg
-HARGA_PLASTIK_PER_KG = 5000  # dalam rupiah
-PLASTIK_DEPOSIT_GRAM = 50  # setiap item plastik menambah 50 gram saldo
-
-# Simulasi saldo e-wallet (diinisialisasi 0)
-saldo_ewallet = 0
+# Inisialisasi saldo e-wallet
+saldo_ewallet = 0  
+HARGA_SAMPAH_PLASTIK_PER_KG = 5000  # Harga per kg dalam rupiah
+PLASTIK_BERAT_GRAM = 50  # Berat plastik per item dalam gram
 
 # Streamlit UI
 st.title("Sampah Bercuan - Klasifikasi Sampah")
@@ -43,10 +43,12 @@ def categorize_image(file_path):
                 }
             ],
         )
+
+        if response is None or "output" not in response:
+            return "Tidak diketahui"
         
-        if response and "output" in response:
-            return response["output"]["text"].lower()
-        return "Tidak dapat mengklasifikasikan gambar."
+        return response["output"]["text"]
+
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -57,54 +59,62 @@ def chatbot_response(category):
             model="qwen-max",
             messages=[{"role": "user", "content": f"Apa manfaat dari sampah kategori {category}?"}]
         )
-        
-        if response and "output" in response:
+
+        if "output" in response:
             return response["output"]["text"]
         return "Tidak ada jawaban."
+
     except Exception as e:
         return f"Error: {str(e)}"
 
+def hitung_deposit(category):
+    """Cek apakah sampah plastik, lalu tambahkan saldo"""
+    global saldo_ewallet  # Pastikan menggunakan variabel global
+    if "plastik" in category.lower():
+        tambahan_saldo = (PLASTIK_BERAT_GRAM / 1000) * HARGA_SAMPAH_PLASTIK_PER_KG
+        saldo_ewallet += tambahan_saldo
+        return f"Saldo e-wallet bertambah Rp{tambahan_saldo:.2f}. Total saldo: Rp{saldo_ewallet:.2f}"
+    return "Tidak ada saldo yang ditambahkan."
+
 def chatbot_investasi():
-    """Chatbot untuk konsultasi investasi"""
-    user_input = st.text_input("Tanyakan tentang investasi atau emas deposit:")
-    if user_input:
+    """Chatbot investasi untuk menggunakan saldo e-wallet"""
+    try:
         response = Generation.call(
             model="qwen-max",
-            messages=[{"role": "user", "content": user_input}]
+            messages=[{"role": "user", "content": "Bagaimana cara saya menginvestasikan saldo e-wallet?"}]
         )
-        if response and "output" in response:
-            st.write("Assistant Investasi:", response["output"]["text"])
-        else:
-            st.write("Tidak ada jawaban.")
+
+        if "output" in response:
+            return response["output"]["text"]
+        return "Tidak ada saran investasi."
+
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption="Gambar yang diupload", use_column_width=True)
+    st.image(uploaded_file, caption="Gambar yang diupload", use_container_width=True)
+
+    # Simpan file sementara
     img_path = f"temp_{uploaded_file.name}"
     with open(img_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    
+
     # Deteksi kategori sampah
     category = categorize_image(img_path)
     st.write(f"Kategori Sampah: {category}")
-    
-    # Tambah saldo jika sampah adalah plastik
-    global saldo_ewallet
-    if "plastik" in category:
-        deposit = (PLASTIK_DEPOSIT_GRAM / 1000) * HARGA_PLASTIK_PER_KG
-        saldo_ewallet += deposit
-        st.write(f"✅ Anda mendapatkan Rp {deposit:.0f} dari sampah plastik!")
-    
-    # Tampilkan saldo e-wallet
-    st.write(f"💰 Saldo e-wallet: Rp {saldo_ewallet:.0f}")
-    
-    # Chatbot manfaat sampah
+
+    # Hitung saldo jika plastik
+    saldo_info = hitung_deposit(category)
+    st.write(saldo_info)
+
+    # Chatbot memberikan informasi tentang manfaat sampah
     chat_response = chatbot_response(category)
-    st.write(f"♻️ Manfaat Sampah: {chat_response}")
-    
-# Menu chatbot investasi
-st.header("💡 Konsultasi Investasi")
-chatbot_investasi()
-keenam
+    st.write(f"Manfaat Sampah: {chat_response}")
+
+    # Menu investasi
+    if st.button("Gunakan Saldo untuk Investasi"):
+        investasi_response = chatbot_investasi()
+        st.write(f"💰 Saran Investasi: {investasi_response}")
 
 
 
