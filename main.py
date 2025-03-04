@@ -114,7 +114,7 @@ with col3:
     if st.button("Gunakan untuk Investasi (Rp 5000)"):
         gunakan_saldo(5000, "Investasi")
 
-with col2:
+with col4:
     st.subheader("Chatbot - Asistant Investadi Anda")
     chat_input = st.text_input("Sudahkan anda menabung enmas hari ini?")
     chat_response = ""
