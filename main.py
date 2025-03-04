@@ -92,7 +92,7 @@ if img_path:
         st.write(f"Anda mendapatkan saldo e-wallet sebesar Rp {tambahan_saldo:.2f}")
 
 
-st.write("tes")
+
 
 st.markdown("---")
 
