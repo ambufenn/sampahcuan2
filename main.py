@@ -78,7 +78,7 @@ with col1:
         st.image(file_path, caption="Gambar yang diupload", use_container_width=True)
 
         # Membuat URL yang bisa diakses di dalam aplikasi
-        img_path = f"/{UPLOAD_FOLDER}/{uploaded_file.name}"
+        img_path = f"https://github.com/ambufenn/sampahcuan2/blob/alibaba-root/{UPLOAD_FOLDER}/{uploaded_file.name}"
         #
         # st.image(uploaded_file, caption="Gambar yang diupload", use_container_width=True)
         # img_path = f"temp_{uploaded_file.name}"
