@@ -120,7 +120,7 @@ with col3:
         gunakan_saldo(5000, "Investasi")
 
 with col4:
-    st.subheader("Chatbot - Asistant Investadi Anda")
+    st.subheader("Chatbot - Asistant Investasi Anda")
     chat_input = st.text_input("Sudahkan anda menabung enmas hari ini?")
     chat_response = ""
     if chat_input:
