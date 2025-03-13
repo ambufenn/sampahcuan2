@@ -121,7 +121,7 @@ with col3:
 
 with col4:
     st.subheader("Chatbot - Asistant Investasi Anda")
-    chat_input = st.text_input("Sudahkan anda menabung enmas hari ini?")
+    chat_input = st.text_input("Sudahkan anda menabung emas hari ini?")
     chat_response = ""
     if chat_input:
         chat_response = Generation.call(
